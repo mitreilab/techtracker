@@ -10,6 +10,9 @@ output:
   word_document: default
 ---
 
+
+-- See Here: http://rpubs.com/TitelY/REICB -- 
+
 ```{r message=FALSE, warning=FALSE}
 
 library(tidyverse) 
