@@ -1,0 +1,303 @@
+---
+title: '**REI Crunchbase Test_13**'
+author: "YT"
+date: 12/10/2019"
+output:
+  
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+---
+
+```{r message=FALSE, warning=FALSE}
+
+library(tidyverse) 
+library(psych)
+library(reshape2)
+library(kableExtra)
+library(knitr)
+library(scales)
+library(readxl)
+library(highcharter)
+
+```
+
+
+**Limitations**
+
+1. Exports limited to 1,000 observations
+2. Many of the Technologies in the Trecker have no hits in Crunchbase
+3. There is no time variable in the dataset
+
+**KEYNAMES**
+
+1     -     3D printing,
+2     -     VR,
+3     -     Drones,
+4     -     IoT,
+5     -     BIM
+
+
+**General Variables**
+
+1.  Tech	
+2.  Organization
+3.  Location	
+4.  Categories
+9.  CB Rank (Org & Person)
+
+
+**IP Qwery Variables**
+
+Patents, trademarks, IP Score - intellectual property holdings across multiple Patent and Trademark databases
+10. IPqwery - Patents	Siftery - Total Products Active	CB Rank (Investor)
+11. IPqwery - Trademarks Pending
+12. IPqwery - Trademarks Registered
+13. IPqwery - Trademarks	
+14  IPqwery - Most Popular Patent Class
+15. IPqwery - Patents Granted
+16. IPqwery - Patents Pending	
+17. IPqwery - IP Score
+
+**Trend Variables**
+
+18. Trend Score 
+19. SimilarWeb - Monthly Visits	
+20. BuiltWith - Tech Changes	
+
+
+## Load data
+
+```{r}
+TechList <- read.csv("TECH_ALL_VR2.csv", na.strings=c(""," ","NA"))
+#myData_new %>% View()
+TechList %>% dim()
+```
+
+## Cleanup
+
+```{r}
+
+TechList =  subset(TechList, select = c(Tech,Last.Equity.Funding.Amount,Last.Funding.Date,Last.Funding.Amount.Currency..in.USD.)) 
+TechList = na.omit(TechList)
+TechList$Last.Funding.Date = as.Date(TechList$Last.Funding.Date)
+VR= subset(TechList, Tech == "VR")
+
+```
+
+
+## Chart trend over time for one technology 
+
+```{r}
+
+Drone = subset(TechList, Tech == "Drone")
+
+hc2 <- hchart(Drone, type = 'line', color = "#5cf740", hcaes(y = Last.Funding.Amount.Currency..in.USD., group = Tech, x = Last.Funding.Date)) %>%  
+    hc_chart(backgroundColor = "black") %>% 
+
+hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, table = TRUE)  %>% 
+    hc_title(text = "Last funding amount for Drone companies in the last 10 years") %>% 
+    hc_subtitle(text = "Crunchbase exploratory funding over time")
+hc2
+```
+
+
+## Week_03
+## Extend search for all technologies - for products and processes
+
+****************************************************************************************************************
+Process and Product - entire list 
+****************************************************************************************************************
+
+## Process 
+
+
+```{r}
+Process <- read.csv("process.csv", na.strings=c(""," ","NA"))
+#myData %>% View()
+Process %>% dim()
+```
+
+```{r}
+Process
+```
+
+## Chart 
+
+```{r}
+
+# Process
+
+
+hc2 <- hchart(Process, type = 'column',  color = "#B71C1C", borderWidth = 0, hcaes( x = Technology, y = Companies)) %>%  
+    hc_chart(backgroundColor = "black") %>% 
+
+hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, table = TRUE)  %>% 
+    hc_title(text = "Tehnology Process - how many companies come up on CrunchBase") %>% 
+    hc_subtitle(text = "Crunchbase data test version 02")
+
+hc2
+
+```
+
+## Results 
+
+****************************************************************************************************************
+**Process** Results - 4 out of 42 technologies have companies associated with them on Crunchbase
+****************************************************************************************************************
+
+
+```{r}
+Products <- read.csv("product.csv", na.strings=c(""," ","NA"))
+```
+
+## Products   
+
+```{r}
+Products
+```
+
+
+```{r}
+
+# Products
+
+
+hc2 <- hchart(Products, type = 'column',  borderWidth = 0, hcaes( x = Technology, y = Companies)) %>%  
+    hc_chart(backgroundColor = "black") %>% 
+
+hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, table = TRUE)  %>% 
+    hc_title(text = "Tehnology Products - how many companies come up on CrunchBase") %>% 
+    hc_subtitle(text = "Crunchbase data test version 02")
+
+hc2
+```
+
+## Results 
+
+******************************************************************************************************************Products** Results - 7 out of 55 technologies have companies associated with them on Crunchbase ***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************
+
+
+## addendum - questions 
+
+*******************************************
+## Which technologies are in this dataset:
+*******************************************
+
+
+## Which technologies are in this dataset:
+
+```{r}
+myData <- read.csv("techtext_v5.csv", na.strings=c(""," ","NA"))
+
+```
+
+
+```{r}
+  
+## Observation #1 - dataset limited to 1,000 roes,
+## Observation #2 - BIM has only 473 results.  
+
+hchart((myData$Tech),  color = "#B71C1C", borderWidth = 2, borderColor  = "#B71C1C", name = "# companies", color = 'Tech') %>%  
+    hc_chart(backgroundColor = "black") %>% 
+    hc_size(height = 600) %>% 
+
+hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, table = TRUE)  %>% 
+    hc_title(text = "Number of Technolegies in dataset") %>% 
+    hc_subtitle(text = "Crunchbase data test version 01")
+
+```
+
+## What **type** of companies are these?
+
+
+```{r}
+
+# distribution - top industrues are 3D printing (69) and Drones (51)
+
+hchart((myData$Categories),  color = "#B71C1C", borderWidth = 2, borderColor  = "#B71C1C", name = "# listings", color = 'city') %>%  
+    hc_chart(backgroundColor = "black") %>% 
+    hc_size(height = 600) %>% 
+
+hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, table = TRUE)  %>% 
+    hc_title(text = "Companny Type") %>% 
+    hc_subtitle(text = "Distribution of the type of company")
+
+```
+
+
+## Where are these companies located:
+
+```{r}
+
+# Answer: London, NYC and SF.
+
+hchart((myData$Location),  color = "#B71C1C", borderWidth = 2, borderColor  = "#B71C1C", name = "Locations", color = 'city') %>%  
+    hc_chart(backgroundColor = "black") %>% 
+    hc_size(height = 600) %>% 
+
+hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, table = TRUE)  %>% 
+    hc_title(text = "Company distribution by Location") %>% 
+    hc_subtitle(text = "Distribution of all locations by company")
+
+```
+
+## Service distribution
+
+
+```{r}
+### Service type with Siftery 
+hchart((myData$Siftery...Total.Products.Active),  color = "#B71C1C", borderWidth = 2, borderColor  = "#B71C1C", name = "# Services", color = 'Tech') %>%  
+    hc_chart(backgroundColor = "black") %>% 
+    hc_size(height = 600) %>% 
+
+hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, table = TRUE)  %>% 
+    hc_title(text = "Number of Technolegies in dataset") %>% 
+    hc_subtitle(text = "Crunchbase data test version 01")
+
+```
+
+## What is the distribution of IQ scores
+
+```{r}
+### IP score analysis - webbease app 
+
+hchart((myData$IPqwery...IP.Score),   color = "#B71C1C", borderWidth = 2, borderColor  = "#B71C1C", name = "IP", color = 'Tech') %>%  
+    hc_chart(backgroundColor = "black") %>% 
+    hc_size(height = 600) %>% 
+
+hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, table = TRUE)  %>% 
+    hc_title(text = "Number of Technolegies in dataset") %>% 
+    hc_subtitle(text = "Crunchbase data test version 01")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
